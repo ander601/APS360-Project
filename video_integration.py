@@ -34,7 +34,6 @@ def video_integration(img, face_list, mask_detection_list):
     cv2.imshow('img', img)
     return
 
-test_video_integration()
 
 '''
         if mask_detection_list[index]==True:

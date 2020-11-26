@@ -2,7 +2,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
+import torchvision.transforms as transforms
 import cv2
+from PIL import Image
 
 class nn_after_feature(nn.Module):
   def __init__(self, hidden_one, hidden_two):
@@ -37,8 +39,11 @@ class mask_analysis_system:
 
     def analysis(self, img_list):
         judgement_list=[]
+        transformer = transforms.Compose([transforms.Resize([224, 224]), transforms.ToTensor()])
         for img in img_list:
-            img=torch.from_numpy(img).float().unsqueeze(0).permute(0, 3, 1, 2).cuda()
+            img=Image.fromarray(img)
+            img=transformer(img)
+            img=img.float().unsqueeze(0).cuda()
             feature=self.net_feature_extracter.features(img)
             feature=feature.contiguous()
             out=self.net_classifier(feature)
@@ -52,9 +57,16 @@ class mask_analysis_system:
 
 def test_analysis():
     analyzer = mask_analysis_system()
-    for i in range(651):
-        img = cv2.imread('Photos_Directory/withoutMask/'+str(i)+'.jpg.jpg')
-        out=analyzer.analysis([img])
-        print(out)
+    '''
+    transform = transforms.Compose([transforms.Resize((224, 224)), transforms.ToTensor()])
+    image_loaded=torchvision.datasets.ImageFolder("Photos_Directory/Train", transform=transform)
+    train_loader = torch.utils.data.DataLoader(image_loaded, batch_size=64,
+                                                   num_workers=1)
+    '''
+    img = cv2.imread('Photos_Directory/Train/withoutMask/1.jpg.jpg')
+    print(img.shape)
+    out=analyzer.analysis([img])
+    print(out)
 
-test_analysis()
+if __name__ == '__main__':
+    test_analysis()

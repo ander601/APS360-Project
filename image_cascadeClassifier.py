@@ -27,8 +27,8 @@ def get_center_and_radius(eye_center_list):
 
         eye_center_list.pop(center_pair_index[0])
 
-        x_radius = distance * 3
-        y_radius = distance * 3.5
+        x_radius = distance * 3.5
+        y_radius = distance * 4.5
         face_coordinate = (int(center_face_x - x_radius / 2), int(center_face_y - y_radius / 2),
                            int(x_radius), int(y_radius))
         coordinate_list.append(face_coordinate)
@@ -46,7 +46,6 @@ def getFaceCoordinates(img, faceCascade):
         gray,
         scaleFactor=1.1,
         minNeighbors=5,
-        maxSize=(30, 30)
     )
     faces = get_faces_by_eyes(eyes)
 
@@ -60,7 +59,11 @@ def getListOfFaces(img, face_locations):
     list_of_faces = []
     for face_coords in face_locations:
         (x, y, w, h) = face_coords
-        face_image = img[x:x+w, y:y+h]
+        x=max(0, x)
+        y=max(0, y)
+        right=min(len(img[0]), x+w)
+        top=min(len(img), y+h)
+        face_image = img[y:top,x:right]
         resized = cv2.resize(face_image, (width, height))
 
         list_of_faces.append(resized)
@@ -71,7 +74,7 @@ def getListOfFaces(img, face_locations):
 def testGetFaceCoordinates():
     # Read the input image
     img = cv2.imread('Photos_Directory/students.jpg')
-    face_finder = cv2.CascadeClassifier('haarcascade_eye.xml')
+    face_finder = cv2.CascadeClassifier('haarcascade_eye_tree_eyeglasses.xml')
     face_coordinates = getFaceCoordinates(img, face_finder)
     # Draw rectangle around the faces\
     for (x, y, w, h) in face_coordinates:
@@ -80,3 +83,6 @@ def testGetFaceCoordinates():
     # Display the output
     cv2.imshow('img', img)
     cv2.waitKey()
+
+if __name__ == '__main__':
+    testGetFaceCoordinates()

@@ -29,12 +29,16 @@ class mask_analysis_system:
     def __init__(self):
 
         self.net_classifier=nn_after_feature(50, 100)
-        state = torch.load("checkpoint32_0.001_jx.pth")
-        self.net_classifier.load_state_dict(state)
-        self.net_classifier=self.net_classifier.cuda()
-
-        self.net_feature_extracter = torchvision.models.alexnet(pretrained=True)
-        self.net_feature_extracter=self.net_feature_extracter.cuda()
+        if torch.cuda.is_available():
+            state = torch.load("checkpoint32_0.001_jx.pth")
+            self.net_classifier.load_state_dict(state)
+            self.net_classifier=self.net_classifier.cuda()
+            self.net_feature_extracter = torchvision.models.alexnet(pretrained=True)
+            self.net_feature_extracter=self.net_feature_extracter.cuda()
+        else:
+            state = torch.load("checkpoint32_0.001_jx.pth", map_location=torch.device('cpu'))
+            self.net_classifier.load_state_dict(state)
+            self.net_feature_extracter = torchvision.models.alexnet(pretrained=True)
 
 
     def analysis(self, img_list):
@@ -43,7 +47,10 @@ class mask_analysis_system:
         for img in img_list:
             img=Image.fromarray(img)
             img=transformer(img)
-            img=img.float().unsqueeze(0).cuda()
+            if torch.cuda.is_available():
+                img=img.float().unsqueeze(0).cuda()
+            else:
+                img=img.float().unsqueeze(0)
             feature=self.net_feature_extracter.features(img)
             feature=feature.contiguous()
             out=self.net_classifier(feature)

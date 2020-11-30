@@ -30,13 +30,13 @@ class mask_analysis_system:
 
         self.net_classifier=nn_after_feature(50, 100)
         if torch.cuda.is_available():
-            state = torch.load("checkpoint32_0.001_jx.pth")
+            state = torch.load("checkpoint128_0.001.pth")
             self.net_classifier.load_state_dict(state)
             self.net_classifier=self.net_classifier.cuda()
             self.net_feature_extracter = torchvision.models.alexnet(pretrained=True)
             self.net_feature_extracter=self.net_feature_extracter.cuda()
         else:
-            state = torch.load("checkpoint32_0.001_jx.pth", map_location=torch.device('cpu'))
+            state = torch.load("checkpoint128_0.001.pth", map_location=torch.device('cpu'))
             self.net_classifier.load_state_dict(state)
             self.net_feature_extracter = torchvision.models.alexnet(pretrained=True)
 

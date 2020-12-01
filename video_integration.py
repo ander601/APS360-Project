@@ -46,10 +46,10 @@ def video_integration_with_scale(img, face_list, mask_detection_list, scale_size
 
         if mask_detection_list[index]==True:
             outline_color = (255, 0, 0) #red
-            label = "No mask"
+            label = "Mask"
         else:
             outline_color = (0, 0, 255) #blue
-            label = "mask"
+            label = "No Mask"
         
         cv2.rectangle(img, (left, top), (right, bottom), outline_color, 2)
         cv2.putText(img, label, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)

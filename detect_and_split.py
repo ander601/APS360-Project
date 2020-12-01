@@ -70,13 +70,12 @@ def displayImage (image):
     cv2.imshow('', image)
     cv2.waitKey()
 
+if __name__ == '__main__':
+    student_img = cv2.imread('Photos_Directory' + '/' + 'students.jpg')
 
-
-student_img = cv2.imread('Photos_Directory' + '/' + 'students.jpg')
-
-testFaceDetection(student_img)
-#outlineFacesInImage(student_img)
-facesPerImage = getListOfFaces(student_img)
-#displayIndividualFaces(facesPerImage)
+    testFaceDetection(student_img)
+    #outlineFacesInImage(student_img)
+    facesPerImage = getListOfFaces(student_img)
+    #displayIndividualFaces(facesPerImage)
 
 

@@ -1,6 +1,7 @@
 import face_recognition
 import cv2
 import os
+from mask_analysis import *
 
 
 #-------------------FACE DETECTION SYSTEM-------------------
@@ -45,12 +46,17 @@ def getListOfFaces(img):
 
 def testFaceDetection(img):
     face_locations = getCoordinates(img)
+    if not face_locations:
+        print("No faces found in this photograph.")
+        return False
     
     print("Found {} face(s) in this photograph.".format(len(face_locations)))
     
     for count, face_coords in enumerate(face_locations):
         (top, right, bottom, left) = face_coords
         print("Face {} located at pixel location Top: {}, Left: {}, Bottom: {}, Right: {}".format(count, top, left, bottom, right))
+
+    return True
 
 def outlineFacesInImage(img):
     face_locations = getCoordinates(img)
@@ -69,13 +75,46 @@ def displayIndividualFaces(list_of_faces):
 def displayImage (image):
     cv2.imshow('', image)
     cv2.waitKey()
+    
+def show_results(img, face_list, mask_detection_list):
+    font = cv2.FONT_HERSHEY_DUPLEX
+    
+    index=0
+    for (top, right, bottom, left) in face_list:
+        if mask_detection_list[index]==True:
+            outline_color = (255, 0, 0) #red
+            label = "Mask"
+        else:
+            outline_color = (0, 0, 255) #blue
+            label = "No Mask"
+        
+        cv2.rectangle(img, (left, top), (right, bottom), outline_color, 2)
+        cv2.putText(img, label, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
+        index=index+1
+
+    cv2.imshow('', img)
+    cv2.waitKey()
+    return
 
 if __name__ == '__main__':
-    student_img = cv2.imread('Photos_Directory' + '/' + 'students.jpg')
+    #img = cv2.imread('Photos_Directory' + '/' + 'students.jpg')
+    
+    img_path = 'Photos_Directory' + '/' + 'students.jpg'
+    colored_img = cv2.imread(img_path)
+    img = face_recognition.load_image_file(img_path)
 
-    testFaceDetection(student_img)
-    #outlineFacesInImage(student_img)
-    facesPerImage = getListOfFaces(student_img)
-    #displayIndividualFaces(facesPerImage)
+    if testFaceDetection(img):
+        #outlineFacesInImage(img)
+        #facesPerImage = getListOfFaces(img)
+        #displayIndividualFaces(facesPerImage)
+        
+        analyzer = mask_analysis_system()
+
+        coordinate_list = getCoordinates(img)
+        face_list = getListOfFaces(img)
+        judge_list = analyzer.analysis(face_list)
+        
+        show_results(colored_img, coordinate_list, judge_list)
 
 

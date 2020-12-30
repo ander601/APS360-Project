@@ -30,13 +30,13 @@ class mask_analysis_system:
 
         self.net_classifier=nn_after_feature(50, 100)
         if torch.cuda.is_available():
-            state = torch.load("checkpoint128_0.001.pth")
+            state = torch.load("checkpoints/checkpoint128_0.001.pth")
             self.net_classifier.load_state_dict(state)
             self.net_classifier=self.net_classifier.cuda()
             self.net_feature_extracter = torchvision.models.alexnet(pretrained=True)
             self.net_feature_extracter=self.net_feature_extracter.cuda()
         else:
-            state = torch.load("checkpoint128_0.001.pth", map_location=torch.device('cpu'))
+            state = torch.load("checkpoints/checkpoint128_0.001.pth", map_location=torch.device('cpu'))
             self.net_classifier.load_state_dict(state)
             self.net_feature_extracter = torchvision.models.alexnet(pretrained=True)
 
@@ -70,7 +70,7 @@ def test_analysis():
     train_loader = torch.utils.data.DataLoader(image_loaded, batch_size=64,
                                                    num_workers=1)
     '''
-    img = cv2.imread('Photos_Directory/Train/withoutMask/1.jpg.jpg')
+    img = cv2.imread('Photos_Directory/students.jpg')
     print(img.shape)
     out=analyzer.analysis([img])
     print(out)

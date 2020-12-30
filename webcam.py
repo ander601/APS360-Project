@@ -3,7 +3,7 @@ from mask_analysis import *
 from video_integration import *
 import cv2
 import face_recognition
-from detect_and_split import *
+from mask_detection_in_photos import *
 import numpy as np
 
 def integrated_system():
@@ -34,13 +34,6 @@ def integrated_system():
         k = cv2.waitKey(60) & 0xff
         if k == 27:
             break
-            
-        #this shows just your face
-#        count=0
-#        for face in face_list:
-#            count=count+1
-#            cv2.imshow('img'+str(count), face)
-
 
 if __name__ == '__main__':
     integrated_system()
